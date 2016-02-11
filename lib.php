@@ -14,7 +14,7 @@ function parse_4_lists($lists){
 		$r['unit_idx'] = preg_replace('#(^.*unitdetail/|\?.*$)#','',$r['unit_defail_href']);
 		$r['unit_img']=$v['span']['a']['img']['@attributes']['src'];
 		$r['unit_name']=$v['span']['a']['img']['@attributes']['alt'];
-		$r['unit_name']=$v['span']['a']['img']['@attributes']['alt'];
+		$r['unit_name'] = str_replace('<br>',' ',$r['unit_name']);
 		$rs[] = $r;
 	}
 	return $rs;
@@ -57,7 +57,7 @@ function to_insert_sql($rows){
 	foreach($rows as $row){
 		$k_str = implode(',',array_keys($row));
 		$v_str = implode("','",($row));
-		$sql = "REPLACE INTO SDGN_UNIT ({$k_str}) values('{$v_str}');";
+		$sql = "REPLACE INTO sdgn_unit ({$k_str}) values('{$v_str}');";
 		$sqls[]=$sql;
 	}
 	return $sqls;
