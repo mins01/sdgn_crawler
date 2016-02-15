@@ -49,6 +49,14 @@ function parse_4_detail($body,& $row){
 	$row['unit_skil1_img'] = $imgs[0]->src;
 	$row['unit_skil2_img'] = $imgs[1]->src;
 	$row['unit_skil3_img'] = $imgs[2]->src;
+	$skill_txts = $html->find('.skill_txt');;
+	//$row['unit_skil3_desc'] = preg_replace('/<[]/','',$skill_txts[0]->innertext);
+	$t = $skill_txts[0]->find('text');
+	$row['unit_skil1_desc'] = trim(preg_replace('/\s+/',' ',$t[3]->innertext));
+	$t = $skill_txts[1]->find('text');
+	$row['unit_skil2_desc'] = trim(preg_replace('/\s+/',' ',$t[3]->innertext));
+	$t = $skill_txts[2]->find('text');
+	$row['unit_skil3_desc'] = trim(preg_replace('/\s+/',' ',$t[3]->innertext));
 }
 
 
@@ -57,7 +65,7 @@ function to_insert_sql($rows){
 	foreach($rows as $row){
 		$k_str = implode(',',array_keys($row));
 		$v_str = implode("','",($row));
-		$sql = "REPLACE INTO sdgn_unit ({$k_str}) values('{$v_str}');";
+		$sql = "REPLACE INTO sdgn_units ({$k_str}) values('{$v_str}');";
 		$sqls[]=$sql;
 	}
 	return $sqls;
