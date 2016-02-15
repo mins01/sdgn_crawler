@@ -28,6 +28,12 @@ function parse_4_detail($body,& $row){
 	$trs = $html->find('div.unit_tbl td');;
 	$row['unit_rank']= $trs[0]->innertext;
 	$row['unit_properties']= $trs[1]->innertext;
+	switch($row['unit_properties']){
+		case '어썰트':$row['unit_properties_num'] = 1;break;
+		case '밸런스':$row['unit_properties_num'] = 2;break;
+		case '슈터':$row['unit_properties_num'] = 3;break;
+		default:$row['unit_properties_num'] = 0;break;
+	}
 	$row['unit_movetype']= $trs[2]->innertext;
 	$row['unit_anime']= $trs[3]->innertext;
 	$row['unit_txt'] = trim(strip_tags($html->find('p.unit_txt',0)->innertext));
@@ -43,20 +49,20 @@ function parse_4_detail($body,& $row){
 	$row['unit_weapon3_img'] = $imgs[2]->src;
 	
 	$imgs = $html->find('div.skill_status td img');;
-	$row['unit_skil1'] = $imgs[0]->alt;
-	$row['unit_skil2'] = $imgs[1]->alt;
-	$row['unit_skil3'] = $imgs[2]->alt;
-	$row['unit_skil1_img'] = $imgs[0]->src;
-	$row['unit_skil2_img'] = $imgs[1]->src;
-	$row['unit_skil3_img'] = $imgs[2]->src;
+	$row['unit_skill1'] = $imgs[0]->alt;
+	$row['unit_skill2'] = $imgs[1]->alt;
+	$row['unit_skill3'] = $imgs[2]->alt;
+	$row['unit_skill1_img'] = $imgs[0]->src;
+	$row['unit_skill2_img'] = $imgs[1]->src;
+	$row['unit_skill3_img'] = $imgs[2]->src;
 	$skill_txts = $html->find('.skill_txt');;
-	//$row['unit_skil3_desc'] = preg_replace('/<[]/','',$skill_txts[0]->innertext);
+	//$row['unit_skill3_desc'] = preg_replace('/<[]/','',$skill_txts[0]->innertext);
 	$t = $skill_txts[0]->find('text');
-	$row['unit_skil1_desc'] = trim(preg_replace('/\s+/',' ',$t[3]->innertext));
+	$row['unit_skill1_desc'] = trim(preg_replace('/\s+/',' ',$t[3]->innertext));
 	$t = $skill_txts[1]->find('text');
-	$row['unit_skil2_desc'] = trim(preg_replace('/\s+/',' ',$t[3]->innertext));
+	$row['unit_skill2_desc'] = trim(preg_replace('/\s+/',' ',$t[3]->innertext));
 	$t = $skill_txts[2]->find('text');
-	$row['unit_skil3_desc'] = trim(preg_replace('/\s+/',' ',$t[3]->innertext));
+	$row['unit_skill3_desc'] = trim(preg_replace('/\s+/',' ',$t[3]->innertext));
 }
 
 
