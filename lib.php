@@ -58,11 +58,11 @@ function parse_4_detail($body,& $row){
 	$skill_txts = $html->find('.skill_txt');;
 	//$row['unit_skill3_desc'] = preg_replace('/<[]/','',$skill_txts[0]->innertext);
 	$t = $skill_txts[0]->find('text');
-	$row['unit_skill1_desc'] = trim(preg_replace('/\s+/',' ',$t[3]->innertext));
+	$row['unit_skill1_desc'] = trim(preg_replace('/ +/',' ',$t[3]->innertext));
 	$t = $skill_txts[1]->find('text');
-	$row['unit_skill2_desc'] = trim(preg_replace('/\s+/',' ',$t[3]->innertext));
+	$row['unit_skill2_desc'] = trim(preg_replace('/ +/',' ',$t[3]->innertext));
 	$t = $skill_txts[2]->find('text');
-	$row['unit_skill3_desc'] = trim(preg_replace('/\s+/',' ',$t[3]->innertext));
+	$row['unit_skill3_desc'] = trim(preg_replace('/ +/',' ',$t[3]->innertext));
 }
 
 
