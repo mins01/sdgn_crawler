@@ -69,6 +69,12 @@ function parse_4_detail($body,& $row){
 function to_insert_sql($rows){
 	$sqls = array();
 	foreach($rows as $row){
+		foreach($row as $k=>$v){ //한글 URL을 강제 변경하기
+			if(strpos($v,'http://')===0){
+				$v = str_replace(array('%3A','%2F'),array(':','/'),rawurlencode($v));
+			}
+			$row[$k]=$v;
+		}
 		$k_str = implode(',',array_keys($row));
 		$v_str = implode("','",($row));
 		$sql = "REPLACE INTO sdgn_units ({$k_str}) values('{$v_str}');";
