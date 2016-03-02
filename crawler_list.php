@@ -23,11 +23,9 @@ if(!is_file($fn)){
 		list($t0,$t1) = explode('<!--//unit - list -->',$t1);
 		$body = trim($t0);
 		$body = preg_replace('/(<img[^>]*)(>)/','$1 /$2',$body);
-		$sxml = simplexml_load_string('<div>'.$body.'</div>', 'SimpleXMLElement');
-		$arr = json_decode(json_encode($sxml), TRUE);
-		$temp_lists = parse_4_lists($arr);
-		//var_dump($temp_lists);
-		//exit;
+		//$sxml = simplexml_load_string('<div>'.$body.'</div>', 'SimpleXMLElement');
+		//$arr = json_decode(json_encode($sxml), TRUE);
+		$temp_lists = parse_4_lists($body);
 		if($temp_lists===false){
 			$able = false;
 			continue;

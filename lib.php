@@ -1,7 +1,27 @@
 <?
 require('simple_html_dom.php');
 
-function parse_4_lists($lists){
+function parse_4_lists($body){
+	$body = preg_replace('#(<img[^>]*)([^/])(>)#','$1 $2 /$3',$body);
+	$body = str_replace('//>','/>',$body);
+	$html = str_get_html('<div>'.$body.'</div>');
+	$lis = $html->find('li');
+	if(count($lis)==0){
+		return false;
+	}
+	$rs = array();
+	foreach($lis as $li){
+		$r = array();
+		$r['unit_defail_href']='http://sdgn.co.kr'.$li->find('a',0)->href;
+		$r['unit_idx'] = preg_replace('#(^.*unitdetail/|\?.*$)#','',$r['unit_defail_href']);
+		$r['unit_img']=$li->find('img',0)->src;
+		$r['unit_name']=$li->find('a',1)->innertext;
+		$r['unit_name'] = str_replace('<br>',' ',$r['unit_name']);
+		$rs[] = $r;
+	}
+	return $rs;
+}
+function parse_4_lists2($lists){
 	//$lists['ul']['li']
 	print_r($lists);
 	if(!is_array($lists['ul']['li'])){
@@ -36,7 +56,7 @@ function parse_4_detail($body,& $row){
 	}
 	$row['unit_movetype']= $trs[2]->innertext;
 	$row['unit_anime']= $trs[3]->innertext;
-	$row['unit_txt'] = trim(strip_tags($html->find('p.unit_txt',0)->innertext));
+	$row['unit_txt'] = trim(htmlspecialchars_decode(strip_tags($html->find('p.unit_txt',0)->innertext), ENT_QUOTES));
 	$row['unit_img2'] = $html->find('div.unit_img img',0)->src;;
 	
 	$ths = $html->find('div.tbl_status th');;
@@ -73,7 +93,7 @@ function to_insert_sql($rows){
 			if(strpos($v,'http://')===0){
 				$v = str_replace(array('%3A','%2F'),array(':','/'),rawurlencode($v));
 			}
-			$row[$k]=$v;
+			$row[$k]=addslashes($v);
 		}
 		$k_str = implode(',',array_keys($row));
 		$v_str = implode("','",($row));
