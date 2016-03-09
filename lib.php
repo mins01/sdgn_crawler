@@ -63,10 +63,23 @@ function parse_4_detail($body,& $row){
 	$row['unit_weapon1'] = $ths[0]->innertext;
 	$row['unit_weapon2'] = $ths[1]->innertext;
 	$row['unit_weapon3'] = $ths[2]->innertext;
+	$row['unit_weapon4'] = @$ths[3]->innertext;
+	$row['unit_weapon5'] = @$ths[4]->innertext;
+	$row['unit_weapon6'] = @$ths[5]->innertext;
 	$imgs = $html->find('div.tbl_status img');;
 	$row['unit_weapon1_img'] = $imgs[0]->src;
 	$row['unit_weapon2_img'] = $imgs[1]->src;
 	$row['unit_weapon3_img'] = $imgs[2]->src;
+	$row['unit_weapon4_img'] = @$imgs[3]->src;
+	$row['unit_weapon5_img'] = @$imgs[4]->src;
+	$row['unit_weapon6_img'] = @$imgs[5]->src;
+	if(isset($row['unit_weapon4'][0])
+		||isset($row['unit_weapon5'][0])
+	||isset($row['unit_weapon6'][0])){
+		$row['unit_is_transform'] = 1;
+	}else{
+		$row['unit_is_transform'] = 0;
+	}
 	
 	$imgs = $html->find('div.skill_status td img');;
 	$row['unit_skill1'] = $imgs[0]->alt;
