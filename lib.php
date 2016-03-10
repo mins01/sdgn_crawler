@@ -85,9 +85,11 @@ function parse_4_detail($body,& $row){
 	$row['unit_skill1'] = $imgs[0]->alt;
 	$row['unit_skill2'] = $imgs[1]->alt;
 	$row['unit_skill3'] = $imgs[2]->alt;
+	
 	$row['unit_skill1_img'] = $imgs[0]->src;
 	$row['unit_skill2_img'] = $imgs[1]->src;
 	$row['unit_skill3_img'] = $imgs[2]->src;
+	
 	$skill_txts = $html->find('.skill_txt');;
 	//$row['unit_skill3_desc'] = preg_replace('/<[]/','',$skill_txts[0]->innertext);
 	$t = $skill_txts[0]->find('text');
@@ -96,6 +98,12 @@ function parse_4_detail($body,& $row){
 	$row['unit_skill2_desc'] = trim(preg_replace('/\s+/u',' ',$t[3]->innertext));
 	$t = $skill_txts[2]->find('text');
 	$row['unit_skill3_desc'] = trim(preg_replace('/\s+/u',' ',$t[3]->innertext));
+	if($row['unit_is_transform']==1){
+		$row['unit_skill4'] = $imgs[5]->alt;
+		$row['unit_skill4_img'] = $imgs[5]->src;
+		$t = $skill_txts[5]->find('text');
+		$row['unit_skill4_desc'] = trim(preg_replace('/\s+/u',' ',$t[3]->innertext));
+	}
 }
 
 
