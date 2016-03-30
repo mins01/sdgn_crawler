@@ -101,8 +101,13 @@ function parse_4_detail($body,& $row){
 	if($row['unit_is_transform']==1){
 		$row['unit_skill4'] = $imgs[5]->alt;
 		$row['unit_skill4_img'] = $imgs[5]->src;
-		$t = $skill_txts[5]->find('text');
-		$row['unit_skill4_desc'] = trim(preg_replace('/\s+/u',' ',$t[3]->innertext));
+		if(isset($skill_txts[5])){
+			$t = $skill_txts[5]->find('text');
+			$row['unit_skill4_desc'] = trim(preg_replace('/\s+/u',' ',$t[3]->innertext));
+		}else{
+			$row['unit_skill4_desc']='';
+		}
+		
 	}
 }
 
