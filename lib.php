@@ -45,7 +45,24 @@ function parse_4_detail($body,& $row){
 	$body = str_replace('//>','/>',$body);
 	$html = str_get_html('<div>'.$body.'</div>');
 	$row['unit_anime_img'] = $html->find('h3 img[alt=]',0)->src;
-	$trs = $html->find('div.unit_tbl td');;
+	
+	//웨폰체인지
+	$t = $html->find('section.wpn_change',0); 
+	if($t){
+		$row['unit_is_weapon_change'] = 1;
+	}else{
+		$row['unit_is_weapon_change'] = 0;
+	}
+	//변신가능여부
+	$t = $html->find('div.info_tab_svc',0);
+	if($t){
+		$row['unit_is_transform'] = 1;
+	}else{
+		$row['unit_is_transform'] = 0;
+	}
+	
+	//unit_is_weapon_change
+	$trs = $html->find('div.unit_tbl td');
 	$row['unit_rank']= $trs[0]->innertext;
 	$row['unit_properties']= $trs[1]->innertext;
 	switch($row['unit_properties']){
@@ -73,13 +90,7 @@ function parse_4_detail($body,& $row){
 	$row['unit_weapon4_img'] = @$imgs[3]->src;
 	$row['unit_weapon5_img'] = @$imgs[4]->src;
 	$row['unit_weapon6_img'] = @$imgs[5]->src;
-	if(isset($row['unit_weapon4'][0])
-		||isset($row['unit_weapon5'][0])
-	||isset($row['unit_weapon6'][0])){
-		$row['unit_is_transform'] = 1;
-	}else{
-		$row['unit_is_transform'] = 0;
-	}
+	
 	
 	$imgs = $html->find('div.skill_status td img');;
 	$row['unit_skill1'] = $imgs[0]->alt;

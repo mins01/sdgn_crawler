@@ -34,10 +34,11 @@ if(!is_file($fn)){
 	}
 	
 	file_put_contents($fn,serialize($lists));
-}else{
-	echo "{$fn} : cached\n";
-	$lists = unserialize(file_get_contents($fn));
 }
+
+echo "{$fn} : cached\n";
+$lists = unserialize(file_get_contents($fn));
+
 //print_r($lists);
 //=== 상세 목록
 $rows = $lists;
@@ -50,6 +51,13 @@ foreach($rows as $k=> &$row){
 		list($t0,$t1) = explode('<!-- list -->',$body);
 		list($t0,$t1) = explode('<!-- //list -->',$t1);
 		file_put_contents($fn,$t0);
+	}
+}
+
+foreach($rows as $k=> &$row){
+	$fn = 'data.tmp/detail_'.$row['unit_idx'].'.txt';
+	if(!is_file($fn)){
+		exit('not exists file : '.$fn);
 	}else{
 		echo "{$fn} : cached\n";
 		$body = file_get_contents($fn);
