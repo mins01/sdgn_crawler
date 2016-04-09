@@ -119,6 +119,10 @@ function parse_4_detail($body,& $row, & $weapons){
 		}else{
 			$row['unit_skill4_desc']='';
 		}
+	}else{
+		$row['unit_skill4']=  '';
+		$row['unit_skill4_img']=  '';
+		$row['unit_skill4_desc']=  '';
 	}
 	//-- 웨폰만 따로 처리.
 	$weapon_d = array('unit_idx' => $row['unit_idx']);
@@ -162,18 +166,37 @@ function parse_4_detail($body,& $row, & $weapons){
 
 function to_insert_sql($rows,$tbl='sdgn_units'){
 	$sqls = array();
+	
+
+	$sql = '';
 	foreach($rows as $row){
+		
 		foreach($row as $k=>$v){ //한글 URL을 강제 변경하기
 			if(strpos($v,'http://')===0){
 				$v = str_replace(array('%3A','%2F'),array(':','/'),rawurlencode($v));
 			}
 			$row[$k]=addslashes($v);
 		}
-		$k_str = implode(',',array_keys($row));
+		//$k_str = implode(',',array_keys($row));
 		$v_str = implode("','",($row));
-		$sql = "REPLACE INTO {$tbl} ({$k_str}) values('{$v_str}');";
-		$sqls[]=$sql;
+		
+		if(strlen($sql)>102400){
+			$sqls[]=$sql.';';
+			$sql='';
+		}
+		
+		if(strlen($sql)==0){
+			$k_str = implode(',',array_keys($row));
+			$sql = "REPLACE INTO {$tbl} ({$k_str}) values('{$v_str}')";
+		}else{
+			$sql.=",('{$v_str}')";
+		}
 	}
+	if(strlen($sql)>0){
+		$sqls[]=$sql.';';
+		$sql='';
+	}
+	
 	return $sqls;
 }
 

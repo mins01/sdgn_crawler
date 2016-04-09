@@ -72,5 +72,5 @@ $fn = 'data.tmp/_unit.sql';
 $sqls = to_insert_sql($rows,'sdgn_units');
 file_put_contents($fn,implode("\n",$sqls));
 $sqls = to_insert_sql($weapons,'sdgn_weapons');
-file_put_contents($fn,implode("\n",$sqls));
+file_put_contents($fn,implode("\n",$sqls),FILE_APPEND);
 echo "save : {$fn}\n";
