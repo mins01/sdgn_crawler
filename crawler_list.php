@@ -73,4 +73,8 @@ $sqls = to_insert_sql($rows,'sdgn_units');
 file_put_contents($fn,implode("\n",$sqls));
 $sqls = to_insert_sql($weapons,'sdgn_weapons');
 file_put_contents($fn,implode("\n",$sqls),FILE_APPEND);
+$sql = "REPLACE INTO sdgn_weapons_add (sw_key,swa_isdel)
+SELECT sw_key,1 FROM sdgn_weapons sw
+WHERE NOT EXISTS(SELECT 'x' FROM sdgn_weapons_add swa WHERE sw.sw_key = swa.sw_key)";
+file_put_contents($fn,$sql."\n",FILE_APPEND);
 echo "save : {$fn}\n";

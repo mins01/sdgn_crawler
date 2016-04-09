@@ -129,35 +129,41 @@ function parse_4_detail($body,& $row, & $weapons){
 	$t = $html->find('div.tb_weapon'); //기본무기
 	if(isset($t[0])){//기본무기
 		$imgs = $t[0]->find('img');
-		foreach($imgs as $img){
+		foreach($imgs as $k=>$img){
 				$weapon = $weapon_d;
 				$weapon['sw_name'] = $img->alt;
 				$weapon['sw_img'] = $img->src;
+				$weapon['sw_sort'] = $k+1;
 				$weapon['sw_is_transform'] = 0;
 				$weapon['sw_is_change'] = 0;
+				$weapon['sw_key'] = md5($weapon['unit_idx'].$weapon['sw_name'].$weapon['sw_is_change'].$weapon['sw_sort']);
 				$weapons[]=$weapon;
 		}
 	}
 	if(isset($t[1])){//가변무기
 		$imgs = $t[1]->find('img');
-		foreach($imgs as $img){
+		foreach($imgs as $k=>$img){
 				$weapon = $weapon_d;
 				$weapon['sw_name'] = $img->alt;
 				$weapon['sw_img'] = $img->src;
+				$weapon['sw_sort'] = $k+1;
 				$weapon['sw_is_transform'] = 1;
 				$weapon['sw_is_change'] = 0;
+				$weapon['sw_key'] = md5($weapon['unit_idx'].$weapon['sw_name'].$weapon['sw_is_change'].$weapon['sw_sort']);
 				$weapons[]=$weapon;
 		}
 	}
 	$t = $html->find('.wpn_change');	//웨폰체인지
 	if(isset($t[0])){//웨폰체인지
 		$imgs = $t[0]->find('img');
-		foreach($imgs as $img){
+		foreach($imgs as $k=>$img){
 				$weapon = $weapon_d;
 				$weapon['sw_name'] = $img->alt;
 				$weapon['sw_img'] = $img->src;
+				$weapon['sw_sort'] = $k+1;
 				$weapon['sw_is_transform'] = 0;
 				$weapon['sw_is_change'] = 1;
+				$weapon['sw_key'] = md5($weapon['unit_idx'].$weapon['sw_name'].$weapon['sw_is_change'].$weapon['sw_sort']);
 				$weapons[]=$weapon;
 		}
 	}	
@@ -170,7 +176,7 @@ function to_insert_sql($rows,$tbl='sdgn_units'){
 
 	$sql = '';
 	foreach($rows as $row){
-		
+		ksort($row);
 		foreach($row as $k=>$v){ //한글 URL을 강제 변경하기
 			if(strpos($v,'http://')===0){
 				$v = str_replace(array('%3A','%2F'),array(':','/'),rawurlencode($v));
