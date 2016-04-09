@@ -40,7 +40,8 @@ function parse_4_lists2($lists){
 	return $rs;
 }
 
-function parse_4_detail($body,& $row){
+function parse_4_detail($body,& $row, & $weapons){
+
 	$body = preg_replace('#(<img[^>]*)([^/])(>)#','$1 $2 /$3',$body);
 	$body = str_replace('//>','/>',$body);
 	$html = str_get_html('<div>'.$body.'</div>');
@@ -118,12 +119,48 @@ function parse_4_detail($body,& $row){
 		}else{
 			$row['unit_skill4_desc']='';
 		}
-		
 	}
+	//-- 웨폰만 따로 처리.
+	$weapon_d = array('unit_idx' => $row['unit_idx']);
+	$t = $html->find('div.tb_weapon'); //기본무기
+	if(isset($t[0])){//기본무기
+		$imgs = $t[0]->find('img');
+		foreach($imgs as $img){
+				$weapon = $weapon_d;
+				$weapon['sw_name'] = $img->alt;
+				$weapon['sw_img'] = $img->src;
+				$weapon['sw_is_transform'] = 0;
+				$weapon['sw_is_change'] = 0;
+				$weapons[]=$weapon;
+		}
+	}
+	if(isset($t[1])){//가변무기
+		$imgs = $t[1]->find('img');
+		foreach($imgs as $img){
+				$weapon = $weapon_d;
+				$weapon['sw_name'] = $img->alt;
+				$weapon['sw_img'] = $img->src;
+				$weapon['sw_is_transform'] = 1;
+				$weapon['sw_is_change'] = 0;
+				$weapons[]=$weapon;
+		}
+	}
+	$t = $html->find('.wpn_change');	//웨폰체인지
+	if(isset($t[0])){//웨폰체인지
+		$imgs = $t[0]->find('img');
+		foreach($imgs as $img){
+				$weapon = $weapon_d;
+				$weapon['sw_name'] = $img->alt;
+				$weapon['sw_img'] = $img->src;
+				$weapon['sw_is_transform'] = 0;
+				$weapon['sw_is_change'] = 1;
+				$weapons[]=$weapon;
+		}
+	}	
 }
 
 
-function to_insert_sql($rows){
+function to_insert_sql($rows,$tbl='sdgn_units'){
 	$sqls = array();
 	foreach($rows as $row){
 		foreach($row as $k=>$v){ //한글 URL을 강제 변경하기
@@ -134,7 +171,7 @@ function to_insert_sql($rows){
 		}
 		$k_str = implode(',',array_keys($row));
 		$v_str = implode("','",($row));
-		$sql = "REPLACE INTO sdgn_units ({$k_str}) values('{$v_str}');";
+		$sql = "REPLACE INTO {$tbl} ({$k_str}) values('{$v_str}');";
 		$sqls[]=$sql;
 	}
 	return $sqls;

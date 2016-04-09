@@ -42,7 +42,9 @@ $lists = unserialize(file_get_contents($fn));
 //print_r($lists);
 //=== 상세 목록
 $rows = $lists;
+$weapons = array();;
 foreach($rows as $k=> &$row){
+	
 	$fn = 'data.tmp/detail_'.$row['unit_idx'].'.txt';
 	if(!is_file($fn)){
 		$url = $row['unit_defail_href'];
@@ -62,11 +64,13 @@ foreach($rows as $k=> &$row){
 		echo "{$fn} : cached\n";
 		$body = file_get_contents($fn);
 	}
-	$temp_lists = parse_4_detail($body,$row);
+	$temp_lists = parse_4_detail($body,$row,$weapons);
 }
 
 $fn = 'data.tmp/_unit.sql';
 //print_r($rows);
-$sqls = to_insert_sql($rows);
+$sqls = to_insert_sql($rows,'sdgn_units');
+file_put_contents($fn,implode("\n",$sqls));
+$sqls = to_insert_sql($weapons,'sdgn_weapons');
 file_put_contents($fn,implode("\n",$sqls));
 echo "save : {$fn}\n";
