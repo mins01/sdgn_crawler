@@ -43,7 +43,12 @@ $lists = unserialize(file_get_contents($fn));
 //=== 상세 목록
 $rows = $lists;
 $weapons = array();;
+
+$t_row = array();
+
 foreach($rows as $k=> &$row){
+	
+	//if($row['unit_idx']==179){$t_row = $row;}	else{ continue; }
 	
 	$fn = 'data.tmp/detail_'.$row['unit_idx'].'.txt';
 	if(!is_file($fn)){
@@ -55,8 +60,12 @@ foreach($rows as $k=> &$row){
 		file_put_contents($fn,$t0);
 	}
 }
+if(!empty($t_row)){
+	$rows = array($t_row);
+}
 
 foreach($rows as $k=> &$row){
+	
 	$fn = 'data.tmp/detail_'.$row['unit_idx'].'.txt';
 	if(!is_file($fn)){
 		exit('not exists file : '.$fn);
@@ -67,14 +76,17 @@ foreach($rows as $k=> &$row){
 	$temp_lists = parse_4_detail($body,$row,$weapons);
 }
 
+
+
+
 $fn = 'data.tmp/_unit.sql';
 //print_r($rows);
 $sqls = to_insert_sql($rows,'sdgn_units');
-file_put_contents($fn,implode("\n",$sqls));
+file_put_contents($fn,implode("\n",$sqls)."\n");
 $sqls = to_insert_sql($weapons,'sdgn_weapons');
-file_put_contents($fn,implode("\n",$sqls),FILE_APPEND);
+file_put_contents($fn,implode("\n",$sqls)."\n",FILE_APPEND);
 $sql = "REPLACE INTO sdgn_weapons_add (sw_key,swa_isdel)
 SELECT sw_key,1 FROM sdgn_weapons sw
-WHERE NOT EXISTS(SELECT 'x' FROM sdgn_weapons_add swa WHERE sw.sw_key = swa.sw_key)";
+WHERE NOT EXISTS(SELECT 'x' FROM sdgn_weapons_add swa WHERE sw.sw_key = swa.sw_key);\n";
 file_put_contents($fn,$sql."\n",FILE_APPEND);
 echo "save : {$fn}\n";

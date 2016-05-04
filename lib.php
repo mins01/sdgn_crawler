@@ -93,7 +93,8 @@ function parse_4_detail($body,& $row, & $weapons){
 	$row['unit_weapon6_img'] = @$imgs[5]->src;
 	
 	
-	$imgs = $html->find('div.skill_status td img');;
+	$imgs = $html->find('div.skill_status td img');
+
 	$row['unit_skill1'] = $imgs[0]->alt;
 	$row['unit_skill2'] = $imgs[1]->alt;
 	$row['unit_skill3'] = $imgs[2]->alt;
@@ -101,8 +102,30 @@ function parse_4_detail($body,& $row, & $weapons){
 	$row['unit_skill1_img'] = $imgs[0]->src;
 	$row['unit_skill2_img'] = $imgs[1]->src;
 	$row['unit_skill3_img'] = $imgs[2]->src;
+
+
+	$row['unit_skill4'] = '';
+	$row['unit_skill5'] = '';
+	$row['unit_skill6'] = '';
+	$row['unit_skill4_img'] = '';
+	$row['unit_skill5_img'] = '';
+	$row['unit_skill6_img'] = '';
+	$row['unit_skill4_desc'] = '';
+	$row['unit_skill5_desc'] = '';
+	$row['unit_skill6_desc'] = '';
+	
+	
+	if(isset($imgs[3])){
+		$row['unit_skill4'] = $imgs[3]->alt;
+		$row['unit_skill5'] = $imgs[4]->alt;
+		$row['unit_skill6'] = $imgs[5]->alt;
+		$row['unit_skill4_img'] = $imgs[3]->src;
+		$row['unit_skill5_img'] = $imgs[4]->src;
+		$row['unit_skill6_img'] = $imgs[5]->src;
+	}
 	
 	$skill_txts = $html->find('.skill_txt');;
+	
 	//$row['unit_skill3_desc'] = preg_replace('/<[]/','',$skill_txts[0]->innertext);
 	$t = $skill_txts[0]->find('text');
 	$row['unit_skill1_desc'] = trim(preg_replace('/\s+/u',' ',$t[3]->innertext));
@@ -111,19 +134,20 @@ function parse_4_detail($body,& $row, & $weapons){
 	$t = $skill_txts[2]->find('text');
 	$row['unit_skill3_desc'] = trim(preg_replace('/\s+/u',' ',$t[3]->innertext));
 	if($row['unit_is_transform']==1){
-		$row['unit_skill4'] = $imgs[5]->alt;
-		$row['unit_skill4_img'] = $imgs[5]->src;
-		if(isset($skill_txts[5])){
-			$t = $skill_txts[5]->find('text');
-			$row['unit_skill4_desc'] = trim(preg_replace('/\s+/u',' ',$t[3]->innertext));
-		}else{
-			$row['unit_skill4_desc']='';
-		}
-	}else{
-		$row['unit_skill4']=  '';
-		$row['unit_skill4_img']=  '';
-		$row['unit_skill4_desc']=  '';
+		$t = $skill_txts[3]->find('text');
+		$row['unit_skill4_desc'] = trim(preg_replace('/\s+/u',' ',$t[3]->innertext));
+		$t = $skill_txts[4]->find('text');
+		$row['unit_skill5_desc'] = trim(preg_replace('/\s+/u',' ',$t[3]->innertext));
+		$t = $skill_txts[5]->find('text');
+		$row['unit_skill6_desc'] = trim(preg_replace('/\s+/u',' ',$t[3]->innertext));	
 	}
+	$row['unit_is_change_skill'] = 0; //스킬 변경 여부
+	if(isset($row['unit_skill4'][0])){
+		if($row['unit_skill1']!=$row['unit_skill4'] || $row['unit_skill2']!=$row['unit_skill5']){
+			$row['unit_is_change_skill'] = 1;
+		}
+	}
+
 	//-- 웨폰만 따로 처리.
 	$weapon_d = array('unit_idx' => $row['unit_idx']);
 	$t = $html->find('div.tb_weapon'); //기본무기
@@ -136,7 +160,8 @@ function parse_4_detail($body,& $row, & $weapons){
 				$weapon['sw_sort'] = $k+1;
 				$weapon['sw_is_transform'] = 0;
 				$weapon['sw_is_change'] = 0;
-				$weapon['sw_key'] = md5($weapon['unit_idx'].$weapon['sw_name'].$weapon['sw_is_change'].$weapon['sw_sort']);
+				$weapon['sw_key'] = md5($weapon['unit_idx'].$weapon['sw_name'].$weapon['sw_is_change'].$weapon['sw_is_transform'].$weapon['sw_sort']);
+				$weapon['sw_key2'] = md5($weapon['unit_idx'].$weapon['sw_name'].$weapon['sw_is_change'].$weapon['sw_sort']);
 				$weapons[]=$weapon;
 		}
 	}
@@ -149,7 +174,22 @@ function parse_4_detail($body,& $row, & $weapons){
 				$weapon['sw_sort'] = $k+1;
 				$weapon['sw_is_transform'] = 1;
 				$weapon['sw_is_change'] = 0;
-				$weapon['sw_key'] = md5($weapon['unit_idx'].$weapon['sw_name'].$weapon['sw_is_change'].$weapon['sw_sort']);
+				$weapon['sw_key'] = md5($weapon['unit_idx'].$weapon['sw_name'].$weapon['sw_is_change'].$weapon['sw_is_transform'].$weapon['sw_sort']);
+				$weapon['sw_key2'] = md5($weapon['unit_idx'].$weapon['sw_name'].$weapon['sw_is_change'].$weapon['sw_sort']);
+				$weapons[]=$weapon;
+		}
+	}
+	if(isset($t[2])){//가변 후 가변 무기
+		$imgs = $t[2]->find('img');
+		foreach($imgs as $k=>$img){
+				$weapon = $weapon_d;
+				$weapon['sw_name'] = $img->alt;
+				$weapon['sw_img'] = $img->src;
+				$weapon['sw_sort'] = $k+1;
+				$weapon['sw_is_transform'] = 2;
+				$weapon['sw_is_change'] = 0;
+				$weapon['sw_key'] = md5($weapon['unit_idx'].$weapon['sw_name'].$weapon['sw_is_change'].$weapon['sw_is_transform'].$weapon['sw_sort']);
+				$weapon['sw_key2'] = md5($weapon['unit_idx'].$weapon['sw_name'].$weapon['sw_is_change'].$weapon['sw_sort']);
 				$weapons[]=$weapon;
 		}
 	}
@@ -163,7 +203,8 @@ function parse_4_detail($body,& $row, & $weapons){
 				$weapon['sw_sort'] = $k+1;
 				$weapon['sw_is_transform'] = 0;
 				$weapon['sw_is_change'] = 1;
-				$weapon['sw_key'] = md5($weapon['unit_idx'].$weapon['sw_name'].$weapon['sw_is_change'].$weapon['sw_sort']);
+				$weapon['sw_key'] = md5($weapon['unit_idx'].$weapon['sw_name'].$weapon['sw_is_change'].$weapon['sw_is_transform'].$weapon['sw_sort']);
+				$weapon['sw_key2'] = md5($weapon['unit_idx'].$weapon['sw_name'].$weapon['sw_is_change'].$weapon['sw_sort']);
 				$weapons[]=$weapon;
 		}
 	}	
